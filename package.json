@@ -4,6 +4,8 @@
    "main": "src/index.ts",
    "license": "MIT",
    "devDependencies": {
+      "@commitlint/cli": "^8.2.0",
+      "@commitlint/config-conventional": "^8.2.0",
       "@types/bcryptjs": "^2.4.2",
       "@types/express": "^4.17.2",
       "@types/express-jwt": "^0.0.42",
@@ -11,6 +13,9 @@
       "@types/jsonwebtoken": "^8.3.5",
       "@types/node": "^12.12.14",
       "@types/node-fetch": "^2.5.4",
+      "commitizen": "^4.0.3",
+      "cz-conventional-changelog": "3.0.2",
+      "husky": "^3.1.0",
       "nodemon": "^2.0.1",
       "rimraf": "^3.0.0",
       "ts-node": "8.5.4",
@@ -42,6 +47,17 @@
       "watch-ts": "tsc --preserveWatchOutput -w",
       "build": "tsc",
       "prebuild": "yarn clear",
-      "clear": "rimraf dist"
-   }
+      "clear": "rimraf dist",
+      "commit": "git-cz"
+   },
+   "config": {
+      "commitizen": {
+         "path": "./node_modules/cz-conventional-changelog"
+      }
+   },
+   "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }  
+  }
 }
