@@ -1,1 +1,1 @@
-# typegraphql-boilerplate
+# PixelVoid
