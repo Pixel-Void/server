@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { Resolver, Mutation, Arg } from 'type-graphql';
+import { Resolver, Mutation, Arg, Authorized } from 'type-graphql';
 import { Void } from '~/entity/Void';
 import { CreateVoidInput } from './void-input';
 import VoidRepository from '~/repositories/void-repository';
@@ -13,6 +13,7 @@ export class VoidResolver {
     private readonly authService: AuthService,
   ) {}
 
+  @Authorized()
   @Mutation(returns => Void)
   async createVoid(
     @Arg('input') createUserData: CreateVoidInput,

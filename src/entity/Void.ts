@@ -7,9 +7,11 @@ import {
   UpdateDateColumn,
   BeforeUpdate,
   AfterInsert,
+  AfterLoad,
+  BeforeInsert,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
-import slugify from 'slugify';
+import slug from '~/utils/slug';
 
 @ObjectType('VoidNode')
 @Entity({ name: 'voids' })
@@ -38,10 +40,10 @@ export class Void {
   @UpdateDateColumn()
   updatedAt: string;
 
-  @AfterInsert()
-  @BeforeUpdate()
+  @BeforeInsert()
   private slugify() {
-    const slug = slugify(this.name, { lower: true });
-    this.slug = `${slug}-${this.id}`;
+    if (this.slug === undefined) {
+      this.slug = slug(this.name);
+    }
   }
 }
