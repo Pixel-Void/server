@@ -3,7 +3,6 @@ import http from 'http';
 import path from 'path';
 
 import { ApolloServer } from 'apollo-server-express';
-import { createConnection } from 'typeorm';
 import { buildSchema } from 'type-graphql';
 import { Container, Service } from 'typedi';
 
