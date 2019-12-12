@@ -13,7 +13,7 @@ export default class AuthService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly configService: Env,
-  ) {}
+  ) { }
   public async authenticate(
     email: string,
     password: string,
@@ -36,5 +36,12 @@ export default class AuthService {
 
   public checkPassword(password: string, passwordHash: string): boolean {
     return bcryptjs.compareSync(password, passwordHash);
+  }
+
+  public async checkUserExist(id: string): Promise<boolean> {
+    const user = await this.userRepository.findOne(id);
+    if (!user) return false;
+
+    return true;
   }
 }

@@ -9,6 +9,7 @@ import { AuthContext } from '~/auth/auth-context';
 import { AllUsersPayload } from './user-payload';
 import UserRepository from '~/repositories/user-repository';
 import { SearchInput } from '../common/search-input';
+import { ObjectID } from 'typeorm';
 
 @Service()
 @Resolver(of => User)
@@ -38,7 +39,7 @@ export class UserResolver {
   @Authorized()
   @Query(returns => User)
   async me(@Ctx() { user }: AuthContext) {
-    return this.userRepository.repository.findOneOrFail({ id: user.id });
+    return this.userRepository.repository.findOneOrFail(user.id);
   }
 
   @Mutation(returns => LoginPayload)

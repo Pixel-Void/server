@@ -18,7 +18,10 @@ class App {
   private server: http.Server;
   private app: express.Application;
 
-  constructor(private readonly configService: Env, private readonly database: Database) {
+  constructor(
+    private readonly configService: Env,
+    private readonly database: Database,
+  ) {
     this.app = express();
 
     this.middlewares();
