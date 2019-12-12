@@ -2,7 +2,7 @@ import { InputType, Field, Int } from 'type-graphql';
 import { Min } from 'class-validator';
 
 @InputType()
-export class SearchInput {
+export default class SearchInput {
   @Field(type => Int, { nullable: true, defaultValue: 1 })
   @Min(1)
   page: number;

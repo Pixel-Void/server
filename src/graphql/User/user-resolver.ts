@@ -2,14 +2,11 @@ import { Resolver, Query, Mutation, Arg, Ctx, Authorized, Args } from 'type-grap
 import { Service } from 'typedi';
 import { CreateUserInput, LoginInput } from './user-input';
 
-import AuthService from '~/auth/auth-service';
+import { AuthService, LoginPayload, AuthContext } from '~/auth/';
 import { User } from '~/entity/User';
-import { LoginPayload } from '~/auth/auth-payload';
-import { AuthContext } from '~/auth/auth-context';
 import { AllUsersPayload } from './user-payload';
 import UserRepository from '~/repositories/user-repository';
-import { SearchInput } from '../common/search-input';
-import { ObjectID } from 'typeorm';
+import { SearchInput } from '~/graphql/common/search';
 
 @Service()
 @Resolver(of => User)
@@ -17,7 +14,7 @@ export class UserResolver {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly authService: AuthService,
-  ) {}
+  ) { }
 
   @Authorized()
   @Query(returns => AllUsersPayload)

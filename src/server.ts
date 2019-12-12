@@ -9,8 +9,7 @@ import { Container, Service } from 'typedi';
 import jwt from 'express-jwt';
 
 import Env from './config/Env';
-import { AuthContext } from './auth/auth-context';
-import { customAuthChecker } from './auth/auth-checker';
+import { AuthContext, customAuthChecker } from './auth';
 import Database from './database';
 
 @Service()
