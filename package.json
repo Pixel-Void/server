@@ -11,8 +11,10 @@
       "@types/express-jwt": "^0.0.42",
       "@types/hapi__joi": "^16.0.4",
       "@types/jsonwebtoken": "^8.3.5",
+      "@types/mongodb": "^3.3.12",
       "@types/node": "^12.12.14",
       "@types/node-fetch": "^2.5.4",
+      "@types/uuid": "^3.4.6",
       "commitizen": "^4.0.3",
       "cz-conventional-changelog": "3.0.2",
       "husky": "^3.1.0",
@@ -39,7 +41,8 @@
       "type-graphql": "^0.17.5",
       "typedi": "^0.8.0",
       "typeorm": "^0.2.21",
-      "typeorm-typedi-extensions": "^0.2.3"
+      "typeorm-typedi-extensions": "^0.2.3",
+      "uuid": "^3.3.3"
    },
    "scripts": {
       "start": "node -r ./tsconfig-paths-bootstrap.js dist/index.js",
