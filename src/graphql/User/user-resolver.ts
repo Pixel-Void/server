@@ -8,8 +8,6 @@ import { User } from '~/entity/User';
 import UserRepository from '~/repositories/user-repository';
 import UsersVoidsRepository from '~/repositories/usersVoids-repository';
 import { SearchInput } from '~/graphql/common/search';
-import { CreateVoidInput } from '../Void/void-input';
-import { UsersVoids } from '~/entity/UsersVoids';
 
 @Service()
 @Resolver(of => User)
