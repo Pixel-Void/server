@@ -6,10 +6,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
+  OneToMany,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 
 import bcryptjs from 'bcryptjs';
+import { UsersVoids } from './UsersVoids';
 
 @ObjectType('UserNode')
 @Entity({ name: 'users' })
@@ -44,6 +46,10 @@ export class User {
   @Field()
   @UpdateDateColumn()
   updatedAt: string;
+
+  @Field(type => [UsersVoids], { name: 'voidSubscriptions' })
+  @OneToMany(type => UsersVoids, userToVoids => userToVoids.user)
+  voids!: UsersVoids[];
 
   @BeforeInsert()
   @BeforeUpdate()

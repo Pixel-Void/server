@@ -5,9 +5,11 @@ import {
   UpdateDateColumn,
   BeforeInsert,
   PrimaryGeneratedColumn,
+  OneToMany,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import slug from '~/utils/slug';
+import { UsersVoids } from './UsersVoids';
 
 @ObjectType('VoidNode')
 @Entity({ name: 'voids' })
@@ -35,6 +37,9 @@ export class Void {
   @Field()
   @UpdateDateColumn()
   updatedAt: string;
+
+  @OneToMany(type => UsersVoids, userToVoids => userToVoids.void)
+  users!: UsersVoids[];
 
   @BeforeInsert()
   private slugify() {

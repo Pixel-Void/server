@@ -1,11 +1,12 @@
-import { Resolver, Query, Mutation, Arg, Ctx, Authorized, Args } from 'type-graphql';
+import { Resolver, Query, Mutation, Arg, Ctx, Authorized, Args, FieldResolver, Root } from 'type-graphql';
 import { Service } from 'typedi';
-import { CreateUserInput, LoginInput } from './user-input';
 
+import { CreateUserInput, LoginInput } from './user-input';
+import { AllUsersPayload } from './user-payload';
 import { AuthService, LoginPayload, AuthContext } from '~/auth/';
 import { User } from '~/entity/User';
-import { AllUsersPayload } from './user-payload';
 import UserRepository from '~/repositories/user-repository';
+import UsersVoidsRepository from '~/repositories/usersVoids-repository';
 import { SearchInput } from '~/graphql/common/search';
 
 @Service()
@@ -13,6 +14,7 @@ import { SearchInput } from '~/graphql/common/search';
 export class UserResolver {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly usersVoidsRepository: UsersVoidsRepository,
     private readonly authService: AuthService,
   ) { }
 
@@ -49,5 +51,13 @@ export class UserResolver {
     @Arg('input') createUserData: CreateUserInput,
   ): Promise<User> {
     return this.userRepository.create(createUserData);
+  }
+
+  @FieldResolver()
+  async voids(@Root() user: User) {
+    const findVoids = await this.usersVoidsRepository.repository.find({
+      where: { userId: user.id }, relations: ['void'],
+    });
+    return findVoids;
   }
 }
