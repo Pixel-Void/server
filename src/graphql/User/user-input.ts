@@ -25,6 +25,12 @@ export class CreateUserInput implements Partial<User> {
 }
 
 @ArgsType()
+export class CreateVoidSubscriptionInput {
+  @Field()
+  voidId: string;
+}
+
+@ArgsType()
 export class LoginInput {
   @Field()
   email: string;

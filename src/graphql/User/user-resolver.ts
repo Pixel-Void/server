@@ -1,13 +1,15 @@
 import { Resolver, Query, Mutation, Arg, Ctx, Authorized, Args, FieldResolver, Root } from 'type-graphql';
 import { Service } from 'typedi';
 
-import { CreateUserInput, LoginInput } from './user-input';
-import { AllUsersPayload } from './user-payload';
+import { CreateUserInput, LoginInput, CreateVoidSubscriptionInput } from './user-input';
+import { AllUsersPayload, CreateVoidSubscriptionPayload } from './user-payload';
 import { AuthService, LoginPayload, AuthContext } from '~/auth/';
 import { User } from '~/entity/User';
 import UserRepository from '~/repositories/user-repository';
 import UsersVoidsRepository from '~/repositories/usersVoids-repository';
 import { SearchInput } from '~/graphql/common/search';
+import { CreateVoidInput } from '../Void/void-input';
+import { UsersVoids } from '~/entity/UsersVoids';
 
 @Service()
 @Resolver(of => User)
@@ -51,6 +53,16 @@ export class UserResolver {
     @Arg('input') createUserData: CreateUserInput,
   ): Promise<User> {
     return this.userRepository.create(createUserData);
+  }
+
+  @Mutation(returns => CreateVoidSubscriptionPayload)
+  async createVoidSubscription(
+    @Args() createData: CreateVoidSubscriptionInput,
+    @Ctx() { user }: AuthContext,
+  ): Promise<CreateVoidSubscriptionPayload> {
+    const createdSubscription = await this.usersVoidsRepository.create(createData, user.id);
+
+    return { ok: !!createdSubscription };
   }
 
   @FieldResolver()
