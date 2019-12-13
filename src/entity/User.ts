@@ -5,8 +5,7 @@ import {
   BeforeUpdate,
   CreateDateColumn,
   UpdateDateColumn,
-  ObjectIdColumn,
-  ObjectID,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 
@@ -16,8 +15,8 @@ import bcryptjs from 'bcryptjs';
 @Entity({ name: 'users' })
 export class User {
   @Field(type => ID)
-  @ObjectIdColumn()
-  id: ObjectID;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Field()
   @Column({ unique: true })

@@ -1,25 +1,20 @@
 import {
   Entity,
-  ObjectIdColumn,
-  ObjectID,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
   BeforeInsert,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
-import { v1 as uuidV1 } from 'uuid';
 import slug from '~/utils/slug';
 
 @ObjectType('VoidNode')
 @Entity({ name: 'voids' })
 export class Void {
   @Field(type => ID)
-  @ObjectIdColumn()
-  id: ObjectID;
-
-  @Column({ unique: true, update: false })
-  uuid: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Field()
   @Column({ nullable: false, unique: true })
@@ -46,10 +41,5 @@ export class Void {
     if (this.slug === undefined) {
       this.slug = slug(this.name);
     }
-  }
-
-  @BeforeInsert()
-  private generateUuid() {
-    this.uuid = uuidV1();
   }
 }

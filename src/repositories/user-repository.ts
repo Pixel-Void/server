@@ -1,15 +1,15 @@
 import { Service } from 'typedi';
 import { InjectRepository } from 'typeorm-typedi-extensions';
-import { MongoRepository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
+import { GraphQLError } from 'graphql';
 
 import { User } from '~/entity/User';
-import { GraphQLError } from 'graphql';
 import { CreateUserInput } from '~/graphql/User/user-input';
 
 @Service()
 export default class UserRepository {
   constructor(
-    @InjectRepository(User) public readonly repository: MongoRepository<User>,
+    @InjectRepository(User) public readonly repository: Repository<User>,
   ) {}
 
   public async paginateAndSearch(
@@ -21,12 +21,10 @@ export default class UserRepository {
     const [users, totalCount] = await this.repository.findAndCount({
       take: limit,
       skip: offset,
-      where: {
-        $or: [
-          { email: { $regex: `${query}` } },
-          { username: { $regex: `${query}` } },
-        ],
-      },
+      where: [
+          { email:  Like(`%${query}%`) },
+          { username: Like(`%${query}%`) },
+      ],
     });
 
     return { users, totalCount };

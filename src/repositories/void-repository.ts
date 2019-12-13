@@ -1,15 +1,15 @@
 import { Service } from 'typedi';
 import { InjectRepository } from 'typeorm-typedi-extensions';
-import { MongoRepository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
+import { GraphQLError } from 'graphql';
 
 import { Void } from '~/entity/Void';
 import { CreateVoidInput } from '~/graphql/Void/void-input';
-import { GraphQLError } from 'graphql';
 
 @Service()
 export default class VoidRepository {
   constructor(
-    @InjectRepository(Void) public readonly repository: MongoRepository<Void>,
+    @InjectRepository(Void) public readonly repository: Repository<Void>,
   ) {}
 
   public async create(payload: CreateVoidInput) {
@@ -32,12 +32,10 @@ export default class VoidRepository {
     const [voids, totalCount] = await this.repository.findAndCount({
       take: limit,
       skip: offset,
-      where: {
-        $or: [
-          { name: { $regex: `${query}` } },
-          { slug: { $regex: `${query}` } },
+      where: [
+          { name: Like(`%${query}%`) },
+          { slug: Like(`%${query}%`) },
         ],
-      },
     });
 
     return { voids, totalCount };

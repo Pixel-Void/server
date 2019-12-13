@@ -2,11 +2,18 @@ version: '3.1'
 
 services:
 
-  mongo:
-    image: mongo
+  db:
+    image: postgres:11.5
     restart: always
     ports:
-      - 27017:27017
+      - "5432:5432"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin
+      POSTGRES_DB: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: pixelvoid
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
