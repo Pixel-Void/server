@@ -4,16 +4,27 @@ import { Repository } from 'typeorm';
 
 import { UsersVoids } from '~/entity/UsersVoids';
 import { CreateVoidSubscriptionInput } from '~/graphql/User/user-input';
+import UserRepository from './user-repository';
+import VoidRepository from './void-repository';
 
 @Service()
 export default class UsersVoidsRepository {
-  constructor(@InjectRepository(UsersVoids) public readonly repository: Repository<UsersVoids>) {}
+  constructor(
+    @InjectRepository(UsersVoids) public readonly repository: Repository<UsersVoids>,
+    private readonly userRepository: UserRepository,
+    private readonly voidRepository: VoidRepository,
+    ) {}
 
   public async create(payload: CreateVoidSubscriptionInput, userId: string) {
+    await this.userRepository.repository.findOneOrFail(userId);
+    const voidEntity = await this.voidRepository.repository.findOneOrFail(payload.voidId);
+
     const subscription = new UsersVoids();
     subscription.userId = userId;
     subscription.voidId = payload.voidId;
+    subscription.void = voidEntity;
 
-    return this.repository.save(subscription);
+    await this.repository.save(subscription);
+    return subscription;
   }
 }

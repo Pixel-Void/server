@@ -53,14 +53,19 @@ export class UserResolver {
     return this.userRepository.create(createUserData);
   }
 
+  @Authorized()
   @Mutation(returns => CreateVoidSubscriptionPayload)
   async createVoidSubscription(
     @Args() createData: CreateVoidSubscriptionInput,
     @Ctx() { user }: AuthContext,
   ): Promise<CreateVoidSubscriptionPayload> {
-    const createdSubscription = await this.usersVoidsRepository.create(createData, user.id);
+    try {
+      const createdSubscription = await this.usersVoidsRepository.create(createData, user.id);
 
-    return { ok: !!createdSubscription };
+      return { subscription: createdSubscription };
+    } catch {
+      throw new Error('Failed to create subscription');
+    }
   }
 
   @FieldResolver()

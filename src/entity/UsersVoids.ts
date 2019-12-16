@@ -5,6 +5,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
   Entity,
+  Index,
 } from 'typeorm';
 import { User } from './User';
 import { Void } from './Void';
@@ -12,6 +13,7 @@ import { ObjectType, Field } from 'type-graphql';
 
 @ObjectType('VoidSubscriptionNode')
 @Entity()
+@Index(['userId', 'voidId'], { unique: true })
 export class UsersVoids {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -33,7 +35,7 @@ export class UsersVoids {
   user!: User;
 
   @Field(type => Void)
-  @ManyToOne(type => Void, voidEntity => voidEntity.users, { eager: true })
+  @ManyToOne(type => Void, voidEntity => voidEntity.users)
   void!: Void;
 
 }
