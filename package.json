@@ -42,7 +42,7 @@
       "typeorm-typedi-extensions": "^0.2.3"
    },
    "scripts": {
-      "start": "node -r ./tsconfig-paths-bootstrap.js dist/index.js",
+      "start": "NODE_ENV=production node -r ./tsconfig-paths-bootstrap.js dist/index.js",
       "dev": "nodemon",
       "watch-node": "nodemon dist/index.js",
       "watch-ts": "tsc --preserveWatchOutput -w",
