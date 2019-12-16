@@ -32,3 +32,9 @@ export class LoginInput {
   @Field()
   password: string;
 }
+
+@ArgsType()
+export class FindUserInput {
+  @Field()
+  username: string;
+}

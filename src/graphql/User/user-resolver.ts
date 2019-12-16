@@ -1,7 +1,7 @@
 import { Resolver, Query, Mutation, Arg, Ctx, Authorized, Args, FieldResolver, Root } from 'type-graphql';
 import { Service } from 'typedi';
 
-import { CreateUserInput, LoginInput } from './user-input';
+import { CreateUserInput, LoginInput, FindUserInput } from './user-input';
 import { AllUsersPayload } from './user-payload';
 import { AuthService, LoginPayload, AuthContext } from '~/auth/';
 import { User } from '~/entity/User';
@@ -37,8 +37,13 @@ export class UserResolver {
 
   @Authorized()
   @Query(returns => User)
-  async me(@Ctx() { user }: AuthContext) {
+  async me(@Ctx() { user }: AuthContext): Promise<User> {
     return this.userRepository.repository.findOneOrFail(user.id);
+  }
+
+  @Query(returns => User)
+  async user(@Args() findData: FindUserInput): Promise<User> {
+    return this.userRepository.repository.findOneOrFail({ username: findData.username });
   }
 
   @Mutation(returns => LoginPayload)
