@@ -3,9 +3,9 @@ import { InjectRepository } from 'typeorm-typedi-extensions';
 import { Repository } from 'typeorm';
 
 import { UsersVoids } from '~/entity/UsersVoids';
-import { CreateVoidSubscriptionInput } from '~/graphql/User/user-input';
 import UserRepository from './user-repository';
 import VoidRepository from './void-repository';
+import { CreateVoidSubscriptionInput } from '~/graphql/Subscription/subscription-input';
 
 @Service()
 export default class UsersVoidsRepository {

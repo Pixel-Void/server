@@ -6,9 +6,3 @@ import { UsersVoids } from '~/entity/UsersVoids';
 
 @ObjectType()
 export class AllUsersPayload extends SearchPayload(User) {}
-
-@ObjectType()
-export class CreateVoidSubscriptionPayload {
-  @Field()
-  subscription: UsersVoids;
-}
