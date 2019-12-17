@@ -40,4 +40,12 @@ export default class UserRepository {
     const user = this.repository.create(payload);
     return this.repository.save(user);
   }
+
+  public async findByUsername(username: string): Promise<User> {
+    const user = await this.repository.findOne({ username });
+
+    if (!user) throw new Error('Unable to find user');
+
+    return user;
+  }
 }

@@ -43,7 +43,7 @@ export class UserResolver {
 
   @Query(returns => User)
   async user(@Args() findData: FindUserInput): Promise<User> {
-    return this.userRepository.repository.findOneOrFail({ username: findData.username });
+    return this.userRepository.findByUsername(findData.username);
   }
 
   @Mutation(returns => LoginPayload)
