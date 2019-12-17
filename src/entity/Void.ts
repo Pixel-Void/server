@@ -10,6 +10,7 @@ import {
 import { ObjectType, Field, ID } from 'type-graphql';
 import slug from '~/utils/slug';
 import { UsersVoids } from './UsersVoids';
+import { Galaxy } from './Galaxy';
 
 @ObjectType('VoidNode')
 @Entity({ name: 'voids' })
@@ -40,6 +41,9 @@ export class Void {
 
   @OneToMany(type => UsersVoids, userToVoids => userToVoids.void)
   users!: UsersVoids[];
+
+  @OneToMany(type => Galaxy, galaxy => galaxy.void)
+  galaxies!: Galaxy[];
 
   @BeforeInsert()
   private slugify() {

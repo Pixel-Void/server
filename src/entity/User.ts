@@ -12,6 +12,7 @@ import { ObjectType, Field, ID } from 'type-graphql';
 
 import bcryptjs from 'bcryptjs';
 import { UsersVoids } from './UsersVoids';
+import { Galaxy } from './Galaxy';
 
 @ObjectType('UserNode')
 @Entity({ name: 'users' })
@@ -50,6 +51,9 @@ export class User {
   @Field(type => [UsersVoids], { name: 'voidSubscriptions' })
   @OneToMany(type => UsersVoids, userToVoids => userToVoids.user)
   voids!: UsersVoids[];
+
+  @OneToMany(type => Galaxy, galaxy => galaxy.author)
+  galaxies!: Galaxy[];
 
   @BeforeInsert()
   @BeforeUpdate()
