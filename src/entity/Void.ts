@@ -42,6 +42,7 @@ export class Void {
   @OneToMany(type => UsersVoids, userToVoids => userToVoids.void)
   users!: UsersVoids[];
 
+  @Field(type => [Galaxy])
   @OneToMany(type => Galaxy, galaxy => galaxy.void)
   galaxies!: Galaxy[];
 

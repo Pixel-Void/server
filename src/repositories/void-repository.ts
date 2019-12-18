@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import { InjectRepository } from 'typeorm-typedi-extensions';
-import { Repository, Like } from 'typeorm';
+import { Repository, Like, FindConditions, FindOneOptions } from 'typeorm';
 import { GraphQLError } from 'graphql';
 
 import { Void } from '~/entity/Void';
@@ -10,7 +10,7 @@ import { CreateVoidInput } from '~/graphql/Void/void-input';
 export default class VoidRepository {
   constructor(
     @InjectRepository(Void) public readonly repository: Repository<Void>,
-  ) {}
+  ) { }
 
   public async create(payload: CreateVoidInput) {
     const voidAlreadyExists = await this.repository.findOne({
@@ -23,6 +23,14 @@ export default class VoidRepository {
     return this.repository.save(voidRealm);
   }
 
+  public async findOne(parameters: FindConditions<Void>, options?: FindOneOptions<Void>) {
+    const voidEntity = await this.repository.findOne(parameters, options);
+
+    if (!voidEntity) throw new Error('Void not found');
+
+    return voidEntity;
+  }
+
   public async paginateAndSearch(
     page: number,
     limit: number,
@@ -33,9 +41,9 @@ export default class VoidRepository {
       take: limit,
       skip: offset,
       where: [
-          { name: Like(`%${query}%`) },
-          { slug: Like(`%${query}%`) },
-        ],
+        { name: Like(`%${query}%`) },
+        { slug: Like(`%${query}%`) },
+      ],
     });
 
     return { voids, totalCount };
