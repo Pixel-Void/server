@@ -4,7 +4,6 @@ import { Galaxy } from '~/entity/Galaxy';
 import GalaxyRepository from '~/repositories/galaxy-repository';
 import { CreateGalaxyInput } from './galaxy-input';
 import { AuthContext } from '~/auth';
-import UserRepository from '~/repositories/user-repository';
 
 @Service()
 @Resolver(of => Galaxy)
@@ -12,7 +11,6 @@ export class GalaxyResolver {
 
   constructor(
     private readonly galaxyRepository: GalaxyRepository,
-    private readonly userRepository: UserRepository,
   ) { }
 
   @Authorized()
