@@ -48,7 +48,7 @@ export class VoidResolver {
 
   @FieldResolver()
   async galaxies(@Root() voidEntity: Void) {
-    return this.galaxyRepository.repository.find({ void: voidEntity });
+    return await voidEntity.galaxies;
   }
 
 }

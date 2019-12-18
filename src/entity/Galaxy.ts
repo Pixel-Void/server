@@ -21,9 +21,9 @@ export class Galaxy {
 
   @Field(type => User)
   @ManyToOne(type => User, user => user.galaxies)
-  author!: User;
+  author!: Promise<User>;
 
-  @Field(type => [Void])
+  @Field(type => Void)
   @ManyToOne(type => Void, voidEntity => voidEntity.galaxies)
-  void!: Void;
+  void!: Promise<Void>;
 }

@@ -22,8 +22,8 @@ export default class GalaxyRepository {
     if (!user || !voidEntity) throw new Error('Failed to create Galaxy');
 
     const galaxy = new Galaxy();
-    galaxy.author = user;
-    galaxy.void = voidEntity;
+    galaxy.author = Promise.resolve(user);
+    galaxy.void = Promise.resolve(voidEntity);
     galaxy.title = payload.title;
     payload.description = payload.description;
 
