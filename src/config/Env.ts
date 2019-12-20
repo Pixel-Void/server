@@ -18,6 +18,9 @@ const env = {
   DB_PASSWORD: Joi.string().required(),
   DB_DATABASE: Joi.string().required(),
   JWT_SECRET: Joi.string().required(),
+  CLOUDINARY_CLOUD_NAME: Joi.string().required(),
+  CLOUDINARY_API_KEY: Joi.string().required(),
+  CLOUDINARY_API_SECRET: Joi.string().required(),
 };
 
 type EnvGet = keyof typeof env;
@@ -35,6 +38,14 @@ class EnvService {
 
   get(key: EnvGet): any {
     return this.envConfig[key];
+  }
+
+  public get getCloudinaryConfig() {
+    return {
+      cloud_name: this.get('CLOUDINARY_CLOUD_NAME'),
+      api_key: this.get('CLOUDINARY_API_KEY'),
+      api_secret: this.get('CLOUDINARY_API_SECRET'),
+    };
   }
 
   private validateInput(envConfig: EnvConfig): EnvConfig {
