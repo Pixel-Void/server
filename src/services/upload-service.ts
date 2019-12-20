@@ -20,8 +20,6 @@ export default class UploadService {
     private readonly configService: Env,
   ) {
     this.uploader = cloudinary;
-
-    this.uploaderConfig();
   }
 
   private uploaderConfig() {
@@ -34,6 +32,8 @@ export default class UploadService {
   }
 
   public async upload(stream: ReadStream): Promise<Upload> {
+    this.uploaderConfig();
+
     return await new Promise(async (resolve, reject) => {
 
       const streamload = await this.uploader.uploader.upload_stream('', (error, result) => {

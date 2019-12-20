@@ -9,10 +9,11 @@ import {
   OneToMany,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
-
 import bcryptjs from 'bcryptjs';
+
 import { UsersVoids } from './UsersVoids';
 import { Galaxy } from './Galaxy';
+import { Star } from './Star';
 
 @ObjectType('UserNode')
 @Entity({ name: 'users' })
@@ -54,6 +55,9 @@ export class User {
 
   @OneToMany(type => Galaxy, galaxy => galaxy.author)
   galaxies!: Galaxy[];
+
+  @OneToMany(type => Star, star => star.author)
+  stars!: Star[];
 
   @BeforeInsert()
   @BeforeUpdate()
