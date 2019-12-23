@@ -7,6 +7,7 @@ import { Upload } from '~/services/upload-service';
 
 import UserRepository from './user-repository';
 import GalaxyRepository from './galaxy-repository';
+import { Galaxy } from '~/entity/Galaxy';
 
 @Service()
 export default class StarRepository {
@@ -16,9 +17,8 @@ export default class StarRepository {
     private readonly galaxyRepository: GalaxyRepository,
   ) { }
 
-  public async create({ userId, galaxyId }: { userId: string, galaxyId: string }, uploadData: Upload) {
+  public async create({ userId, galaxy }: { userId: string, galaxy: Galaxy }, uploadData: Upload) {
     const user = await this.userRepository.repository.findOne(userId);
-    const galaxy = await this.galaxyRepository.repository.findOne(galaxyId);
 
     if (!user || !galaxy) throw new Error('Failed to create Star');
 

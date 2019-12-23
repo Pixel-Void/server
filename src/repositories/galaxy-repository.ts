@@ -13,7 +13,7 @@ export default class GalaxyRepository {
     @InjectRepository(Galaxy) public readonly repository: Repository<Galaxy>,
     private readonly userRepository: UserRepository,
     private readonly voidRepository: VoidRepository,
-  ) {}
+  ) { }
 
   public async create(payload: CreateGalaxyInput, userId: string): Promise<Galaxy> {
     const user = await this.userRepository.repository.findOne(userId);
@@ -28,6 +28,21 @@ export default class GalaxyRepository {
     payload.description = payload.description;
 
     await this.repository.save(galaxy);
+
+    return galaxy;
+  }
+
+  public async findById(galaxyId: string): Promise<Galaxy> {
+    const galaxy = await this.repository.findOne(galaxyId);
+
+    if (!galaxy) throw new Error('Failed to find Galaxy');
+
+    return galaxy;
+  }
+
+  public async findAndCheckOwnership(galaxyId: string, userId: string): Promise<Galaxy> {
+    const galaxy = await this.findById(galaxyId);
+    if ((await galaxy.author).id !== userId) throw new Error('Cannot create Star for this Galaxy!');
 
     return galaxy;
   }
