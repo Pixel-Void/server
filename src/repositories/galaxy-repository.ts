@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import { InjectRepository } from 'typeorm-typedi-extensions';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 
 import { Galaxy } from '~/entity/Galaxy';
 import { CreateGalaxyInput } from '~/graphql/Galaxy/galaxy-input';
@@ -30,6 +30,24 @@ export default class GalaxyRepository {
     await this.repository.save(galaxy);
 
     return galaxy;
+  }
+
+  public async paginateAndSearch(
+    page: number,
+    limit: number,
+    query: string | undefined,
+    voidId: string,
+  ) {
+    const offset = (page - 1) * limit;
+    const [galaxies, totalCount] = await this.repository.findAndCount({
+      take: limit,
+      skip: offset,
+      where: [
+        { title: Like(`%${query}%`), void: { id: voidId } },
+      ],
+    });
+
+    return { galaxies, totalCount };
   }
 
   public async findById(galaxyId: string): Promise<Galaxy> {

@@ -1,9 +1,10 @@
 import { Service } from 'typedi';
-import { Resolver, Mutation, Authorized, Arg, Ctx, FieldResolver, Root } from 'type-graphql';
+import { Resolver, Mutation, Authorized, Arg, Ctx, FieldResolver, Root, Query } from 'type-graphql';
 import { Galaxy } from '~/entity/Galaxy';
 import GalaxyRepository from '~/repositories/galaxy-repository';
-import { CreateGalaxyInput } from './galaxy-input';
+import { CreateGalaxyInput, SearchGalaxyInput } from './galaxy-input';
 import { AuthContext } from '~/auth';
+import { GalaxiesPayload } from './galaxy-payload';
 
 @Service()
 @Resolver(of => Galaxy)
@@ -12,6 +13,24 @@ export class GalaxyResolver {
   constructor(
     private readonly galaxyRepository: GalaxyRepository,
   ) { }
+
+  @Query(returns => GalaxiesPayload)
+  async galaxies(
+    @Arg('input')
+    input: SearchGalaxyInput,
+  ): Promise<GalaxiesPayload | undefined> {
+    const { galaxies, totalCount } = await this.galaxyRepository.paginateAndSearch(
+      input.page,
+      input.limit,
+      input.query || '',
+      input.voidId,
+    );
+
+    return {
+      edges: galaxies,
+      totalCount,
+    };
+  }
 
   @Authorized()
   @Mutation(returns => Galaxy)
