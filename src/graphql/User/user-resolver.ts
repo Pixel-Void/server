@@ -60,6 +60,7 @@ export class UserResolver {
 
   @FieldResolver()
   async voids(@Root() user: User) {
+    console.log(user);
     const findVoids = await this.usersVoidsRepository.repository.find({
       where: { userId: user.id }, relations: ['void'],
     });
