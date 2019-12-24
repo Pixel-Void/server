@@ -19,15 +19,13 @@ export class GalaxyResolver {
     @Arg('input')
     input: SearchGalaxyInput,
   ): Promise<GalaxiesPayload | undefined> {
-    const { galaxies, totalCount } = await this.galaxyRepository.paginateAndSearch(
-      input.page,
-      input.limit,
-      input.query || '',
+    const { edges, totalCount } = await this.galaxyRepository.paginateAndSearch(
+      input,
       input.voidId,
     );
 
     return {
-      edges: galaxies,
+      edges,
       totalCount,
     };
   }

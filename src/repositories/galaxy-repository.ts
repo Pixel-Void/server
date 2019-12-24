@@ -1,11 +1,14 @@
 import { Service } from 'typedi';
 import { InjectRepository } from 'typeorm-typedi-extensions';
-import { Repository, Like } from 'typeorm';
+import { Repository, Brackets } from 'typeorm';
+
+import UserRepository from './user-repository';
+import VoidRepository from './void-repository';
 
 import { Galaxy } from '~/entity/Galaxy';
 import { CreateGalaxyInput } from '~/graphql/Galaxy/galaxy-input';
-import UserRepository from './user-repository';
-import VoidRepository from './void-repository';
+import { GalaxiesPayload } from '~/graphql/Galaxy/galaxy-payload';
+import { SearchInput } from '~/graphql/common/search';
 
 @Service()
 export default class GalaxyRepository {
@@ -33,21 +36,22 @@ export default class GalaxyRepository {
   }
 
   public async paginateAndSearch(
-    page: number,
-    limit: number,
-    query: string | undefined,
+    { page, limit, query }: SearchInput,
     voidId: string,
-  ) {
+  ): Promise<GalaxiesPayload> {
     const offset = (page - 1) * limit;
-    const [galaxies, totalCount] = await this.repository.findAndCount({
-      take: limit,
-      skip: offset,
-      where: [
-        { title: Like(`%${query}%`), void: { id: voidId } },
-      ],
-    });
+    const [galaxies, totalCount] = await this.repository.createQueryBuilder('galaxy')
+      .where('galaxy.void = :voidId', { voidId })
+      .innerJoin('galaxy.author', 'author')
+      .andWhere(new Brackets(qb => {
+        qb.where('LOWER(galaxy.title) LIKE LOWER(:query)', { query: `%${query}%` })
+          .orWhere('LOWER(author.username) LIKE LOWER(:query)', { query: `%${query}%` });
+      }))
+      .take(limit)
+      .skip(offset)
+      .getManyAndCount();
 
-    return { galaxies, totalCount };
+    return { edges: galaxies, totalCount };
   }
 
   public async findById(galaxyId: string): Promise<Galaxy> {
