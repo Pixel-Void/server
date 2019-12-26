@@ -8,6 +8,7 @@ import { User } from '~/entity/User';
 import UserRepository from '~/repositories/user-repository';
 import UsersVoidsRepository from '~/repositories/usersVoids-repository';
 import { SearchInput } from '~/graphql/common/search';
+import { AppContext } from '~/config/Context';
 
 @Service()
 @Resolver(of => User)
@@ -59,11 +60,7 @@ export class UserResolver {
   }
 
   @FieldResolver()
-  async voids(@Root() user: User) {
-    console.log(user);
-    const findVoids = await this.usersVoidsRepository.repository.find({
-      where: { userId: user.id }, relations: ['void'],
-    });
-    return findVoids;
+  async voids(@Root() user: User, @Ctx() { loaders }: AppContext) {
+    return loaders.user.voidSubscription.load(user.id);
   }
 }

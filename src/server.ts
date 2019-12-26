@@ -12,6 +12,7 @@ import Env from './config/Env';
 import { AuthContext, customAuthChecker } from './auth';
 import Database from './database';
 import Loaders from './dataloaders';
+import { AppContext } from './config/Context';
 
 @Service()
 class App {
@@ -56,7 +57,7 @@ class App {
 
     const apollo = new ApolloServer({
       schema,
-      context: ({ req }: any) => {
+      context: ({ req }: any): AppContext => {
         const { loaders } = Container.get(Loaders);
 
         const userCtx: AuthContext = {

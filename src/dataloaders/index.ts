@@ -1,5 +1,9 @@
 import { Service } from 'typedi';
-import UserDataloader from './user-dataloader';
+import UserDataloader, { UserLoader } from './user-dataloader';
+
+export interface LoadersContext {
+  user: UserLoader;
+}
 
 @Service()
 export default class Loaders {
@@ -7,7 +11,7 @@ export default class Loaders {
     private readonly userLoader: UserDataloader,
   ) { }
 
-  public get loaders() {
+  public get loaders(): LoadersContext {
     return ({
       user: { ...this.userLoader.loaders },
     });
