@@ -20,9 +20,7 @@ export default class UserDataloader {
       const usersIds = keys as any[];
       const voids = await this.usersVoidsRepository.repository.find({ where: { userId: In(usersIds) }, relations: ['void'] });
 
-      const voidsMap = batchMany<UsersVoids>(usersIds, voids, 'userId');
-
-      return usersIds.map(key => voidsMap[key]);
+      return batchMany<UsersVoids>(usersIds, voids, 'userId');
     });
   }
 

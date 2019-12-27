@@ -4,5 +4,5 @@ export function batchMany<T>(keys: any[], entities: any, entityKeyIterator: keyo
     entityMap[entity[entityKeyIterator]] = [...entityMap[entity[entityKeyIterator]], entity];
   });
 
-  return entityMap;
+  return keys.map(key => entityMap[key]);
 }
