@@ -1,10 +1,12 @@
 import DataLoader from 'dataloader';
 import { Service } from 'typedi';
-import UsersVoidsRepository from '~/repositories/usersVoids-repository';
 import { In } from 'typeorm';
+
 import { batchMany } from './batch';
-import { UsersVoids } from '~/entity/UsersVoids';
 import { Dataloader } from './interfaces/dataloader';
+
+import { UsersVoids } from '~/entity/UsersVoids';
+import UsersVoidsRepository from '~/repositories/usersVoids-repository';
 
 export interface UserLoader {
   voidSubscription: Dataloader;
@@ -18,9 +20,11 @@ export default class UserDataloader {
   private get voidSubscriptionLoader() {
     return new DataLoader(async keys => {
       const usersIds = keys as any[];
-      const voids = await this.usersVoidsRepository.repository.find({ where: { userId: In(usersIds) }, relations: ['void'] });
+      const voids = await this.usersVoidsRepository.repository.find({
+        where: { userId: In(usersIds) }, relations: ['void'],
+      });
 
-      return batchMany<UsersVoids>(usersIds, voids, 'userId');
+      return batchMany<UsersVoids>(usersIds, voids, ['userId']);
     });
   }
 

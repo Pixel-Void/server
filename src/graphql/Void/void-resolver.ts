@@ -1,19 +1,19 @@
 import { Service } from 'typedi';
-import { Resolver, Mutation, Arg, Authorized, Query, FieldResolver, Root } from 'type-graphql';
+import { Resolver, Mutation, Arg, Authorized, Query, FieldResolver, Root, Ctx } from 'type-graphql';
 
-import { Void } from '~/entity/Void';
 import { CreateVoidInput } from './void-input';
-import VoidRepository from '~/repositories/void-repository';
 import { AllVoidsPayload } from './void-payload';
 import { SearchInput } from '../common/search';
-import GalaxyRepository from '~/repositories/galaxy-repository';
+
+import VoidRepository from '~/repositories/void-repository';
+import { Void } from '~/entity/Void';
+import { AppContext } from '~/config/Context';
 
 @Service()
 @Resolver(of => Void)
 export class VoidResolver {
   constructor(
     private readonly voidRepository: VoidRepository,
-    private readonly galaxyRepository: GalaxyRepository,
   ) { }
 
   @Authorized()
@@ -47,8 +47,8 @@ export class VoidResolver {
   }
 
   @FieldResolver()
-  async galaxies(@Root() voidEntity: Void) {
-    return await voidEntity.galaxies;
+  async galaxies(@Root() voidEntity: Void, @Ctx() { loaders }: AppContext) {
+    return loaders.voids.galaxies.load(voidEntity.id);
   }
 
 }

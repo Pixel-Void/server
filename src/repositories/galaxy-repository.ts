@@ -26,7 +26,7 @@ export default class GalaxyRepository {
 
     const galaxy = new Galaxy();
     galaxy.author = Promise.resolve(user);
-    galaxy.void = Promise.resolve(voidEntity);
+    galaxy.void = voidEntity;
     galaxy.title = payload.title;
     payload.description = payload.description;
 

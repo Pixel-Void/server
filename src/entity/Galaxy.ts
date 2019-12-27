@@ -26,7 +26,7 @@ export class Galaxy {
 
   @Field(type => Void)
   @ManyToOne(type => Void, voidEntity => voidEntity.galaxies)
-  void!: Promise<Void>;
+  void!: Void;
 
   @OneToMany(type => Star, star => star.galaxy)
   stars!: Star[];
