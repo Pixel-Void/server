@@ -5,6 +5,7 @@ import GalaxyRepository from '~/repositories/galaxy-repository';
 import { CreateGalaxyInput, SearchGalaxyInput } from './galaxy-input';
 import { AuthContext } from '~/auth';
 import { GalaxiesPayload } from './galaxy-payload';
+import { AppContext } from '~/config/Context';
 
 @Service()
 @Resolver(of => Galaxy)
@@ -40,12 +41,12 @@ export class GalaxyResolver {
   }
 
   @FieldResolver()
-  async author(@Root() galaxy: Galaxy) {
-    return await galaxy.author;
+  async author(@Root() galaxy: Galaxy, @Ctx() { loaders }: AppContext) {
+    return loaders.galaxy.author.load(galaxy.authorId);
   }
 
   @FieldResolver()
-  async void(@Root() galaxy: Galaxy) {
-    return await galaxy.void;
+  async void(@Root() galaxy: Galaxy, @Ctx() { loaders }: AppContext) {
+    return loaders.galaxy.void.load(galaxy.voidId);
   }
 }
