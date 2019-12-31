@@ -20,13 +20,19 @@ export class Galaxy {
   @Column({ nullable: true })
   description?: string;
 
+  @Column({ nullable: false })
+  authorId: string;
+
+  @Column({ nullable: false })
+  voidId: string;
+
   @Field(type => User)
   @ManyToOne(type => User, user => user.galaxies)
   author!: Promise<User>;
 
   @Field(type => Void)
   @ManyToOne(type => Void, voidEntity => voidEntity.galaxies)
-  void!: Promise<Void>;
+  void!: Void;
 
   @OneToMany(type => Star, star => star.galaxy)
   stars!: Star[];

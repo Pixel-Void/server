@@ -11,6 +11,8 @@ import jwt from 'express-jwt';
 import Env from './config/Env';
 import { AuthContext, customAuthChecker } from './auth';
 import Database from './database';
+import Loaders from './dataloaders';
+import { AppContext } from './config/Context';
 
 @Service()
 class App {
@@ -55,11 +57,19 @@ class App {
 
     const apollo = new ApolloServer({
       schema,
-      context: ({ req }: any) => {
-        const ctx: AuthContext = {
+      context: ({ req }: any): AppContext => {
+        const { loaders } = Container.get(Loaders);
+
+        const userCtx: AuthContext = {
           ...req.user,
         };
-        return ctx;
+
+        const ctx = {
+          ...userCtx,
+          loaders,
+        };
+
+        return ({ ...ctx });
       },
       playground: this.configService.get('NODE_ENV') === 'development',
     });
