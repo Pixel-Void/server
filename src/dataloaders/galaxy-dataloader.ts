@@ -1,18 +1,22 @@
 import { Service } from 'typedi';
 import DataLoader from 'dataloader';
 import { In } from 'typeorm';
+import { drop } from 'lodash';
 
 import { Dataloader } from './interfaces/dataloader';
-import { batch } from './batch';
+import { batch, batchMany, paginatedBatch } from './batch';
 
 import UserRepository from '~/repositories/user-repository';
 import { User } from '~/entity/User';
 import { Void } from '~/entity/Void';
 import VoidRepository from '~/repositories/void-repository';
+import StarRepository from '~/repositories/star-repository';
+import { Star } from '~/entity/Star';
 
 export interface GalaxyLoader {
   author: Dataloader;
   void: Dataloader;
+  stars: Dataloader;
 }
 
 @Service()
@@ -20,7 +24,8 @@ export default class GalaxyDataloader {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly voidRepository: VoidRepository,
-  ) {}
+    private readonly starRepository: StarRepository,
+  ) { }
 
   private get authorLoader() {
     return new DataLoader(async keys => {
@@ -29,7 +34,7 @@ export default class GalaxyDataloader {
         where: { id: In(authorsIds) },
       });
 
-      return batch<User>(authorsIds, authors, ['id']);
+      return batch<User>(authorsIds, authors, 'id');
     });
   }
 
@@ -40,7 +45,22 @@ export default class GalaxyDataloader {
         where: { id: In(voidsIds) },
       });
 
-      return batch<Void>(voidsIds, voids, ['id']);
+      return batch<Void>(voidsIds, voids, 'id');
+    });
+  }
+
+  private get starsLoader() {
+    return new DataLoader(async keys => {
+      const galaxiesIds = keys as any[];
+      const starsIds =
+        await paginatedBatch<Star>({ select: 'id', where: ['galaxyId', galaxiesIds], entity: 'stars' });
+      const stars = starsIds.length > 0 ? await this.starRepository.repository.find({
+        where: {
+          id: In(starsIds),
+        },
+      }) : [];
+
+      return batchMany<Star>(galaxiesIds, stars, 'galaxyId');
     });
   }
 
@@ -48,6 +68,7 @@ export default class GalaxyDataloader {
     return ({
       author: this.authorLoader,
       void: this.voidLoader,
+      stars: this.starsLoader,
     });
   }
 }

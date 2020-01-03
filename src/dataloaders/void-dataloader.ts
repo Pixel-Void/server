@@ -23,12 +23,11 @@ export default class VoidDataloader {
       const voidsIds = keys as any[];
       const galaxies = await this.galaxyRepository.repository.find({
         where: {
-          void: { id: In(voidsIds) },
+          voidId: In(voidsIds),
         },
-        relations: ['void'],
       });
 
-      return batchMany<Galaxy>(voidsIds, galaxies, ['void', 'id']);
+      return batchMany<Galaxy>(voidsIds, galaxies, 'voidId');
     });
   }
 

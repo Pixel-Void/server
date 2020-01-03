@@ -49,4 +49,9 @@ export class GalaxyResolver {
   async void(@Root() galaxy: Galaxy, @Ctx() { loaders }: AppContext) {
     return loaders.galaxy.void.load(galaxy.voidId);
   }
+
+  @FieldResolver()
+  async stars(@Root() galaxy: Galaxy, @Ctx() { loaders }: AppContext, @Arg('take') take: number) {
+    return loaders.galaxy.stars.load(galaxy.id);
+  }
 }

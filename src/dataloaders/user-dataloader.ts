@@ -24,7 +24,7 @@ export default class UserDataloader {
         where: { userId: In(usersIds) }, relations: ['void'],
       });
 
-      return batchMany<UsersVoids>(usersIds, voids, ['userId']);
+      return batchMany<UsersVoids>(usersIds, voids, 'userId');
     });
   }
 

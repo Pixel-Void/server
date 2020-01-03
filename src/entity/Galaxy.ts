@@ -34,6 +34,7 @@ export class Galaxy {
   @ManyToOne(type => Void, voidEntity => voidEntity.galaxies)
   void!: Void;
 
+  @Field(type => [Star], { nullable: true })
   @OneToMany(type => Star, star => star.galaxy)
   stars!: Star[];
 }

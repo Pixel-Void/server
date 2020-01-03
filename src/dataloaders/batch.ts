@@ -1,21 +1,24 @@
-import { get } from 'lodash';
+import { get, groupBy } from 'lodash';
+import { getConnection } from 'typeorm';
 
-export function batchMany<T>(keys: any[], entities: any[], entityKeyIterator: [keyof T, ...string[]]): T[] {
-  const entityMap = keys.reduce((accumulator, currentValue) => (accumulator[currentValue] = [], accumulator), {});
-  entities.forEach((entity: any) => {
-    const iterator = get(entity, entityKeyIterator as any);
-    entityMap[iterator] = [...entityMap[iterator], entity];
-  });
-
-  return keys.map(key => entityMap[key]);
+export function batchMany<T>(keys: any[], entities: any[], entityKeyIterator: keyof T): T[][] {
+  const entityMap = groupBy(entities, entityKeyIterator);
+  return keys.map(key => !!entityMap[key] ? entityMap[key] : []);
 }
 
-export function batch<T>(keys: any[], entities: any[], entityKeyIterator: [keyof T, ...string[]]) {
-  const entityMap = keys.reduce((accumulator, currentValue) => (accumulator[currentValue] = [], accumulator), {});
-  entities.forEach(entity => {
-    const iterator = get(entity, entityKeyIterator as any);
-    entityMap[iterator] = entity;
-  });
+export function batch<T>(keys: any[], entities: any[], entityKeyIterator: keyof T) {
+  const entityMap = groupBy(entities, entityKeyIterator);
+  return keys.map(key => entityMap[key][0]);
+}
 
-  return keys.map(key => entityMap[key]);
+export async function paginatedBatch<T>({
+  select, where, entity, take = 10,
+}: {
+  select: keyof T, where: [keyof T, string[]], entity: string, take?: number,
+}) {
+  const manager = getConnection();
+  const [column, keys] = where;
+  const sql = keys.map((key, index) => `(SELECT ${select} FROM ${entity} WHERE ${entity}."${column}" = $${index + 1} LIMIT ${take})`);
+  const results: any[] = await manager.query(sql.join(' UNION '), keys);
+  return results.map(result => result[select]);
 }

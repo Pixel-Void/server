@@ -33,6 +33,9 @@ export class Star implements Partial<Upload> {
   @Column()
   height: number;
 
+  @Column({ nullable: false })
+  galaxyId: string;
+
   @ManyToOne(type => User, user => user.stars)
   author!: Promise<User>;
 
