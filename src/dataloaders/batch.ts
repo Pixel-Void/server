@@ -1,4 +1,4 @@
-import { get, groupBy } from 'lodash';
+import { groupBy } from 'lodash';
 import { getConnection } from 'typeorm';
 
 export function batchMany<T>(keys: any[], entities: any[], entityKeyIterator: keyof T): T[][] {
@@ -11,6 +11,8 @@ export function batch<T>(keys: any[], entities: any[], entityKeyIterator: keyof 
   return keys.map(key => entityMap[key][0]);
 }
 
+export interface PaginatedBatch { id: string; take: number; }
+
 export async function paginatedBatch<T>({
   select, where, entity, take = 10,
 }: {
@@ -18,7 +20,7 @@ export async function paginatedBatch<T>({
 }) {
   const manager = getConnection();
   const [column, keys] = where;
-  const sql = keys.map((key, index) => `(SELECT ${select} FROM ${entity} WHERE ${entity}."${column}" = $${index + 1} LIMIT ${take})`);
+  const sql = keys.map((key, index) => `(SELECT ${select}, ${entity}."${column}" FROM ${entity} WHERE ${entity}."${column}" = $${index + 1} LIMIT ${take})`);
   const results: any[] = await manager.query(sql.join(' UNION '), keys);
-  return results.map(result => result[select]);
+  return groupBy(results, column);
 }

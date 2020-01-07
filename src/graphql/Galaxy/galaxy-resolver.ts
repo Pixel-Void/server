@@ -52,6 +52,7 @@ export class GalaxyResolver {
 
   @FieldResolver()
   async stars(@Root() galaxy: Galaxy, @Ctx() { loaders }: AppContext, @Arg('take') take: number) {
-    return loaders.galaxy.stars.load(galaxy.id);
+    const rows = await loaders.galaxy.starsIds.load({id: galaxy.id, take});
+    return rows ? rows.map(row => loaders.galaxy.stars.load(row.id)) : [];
   }
 }

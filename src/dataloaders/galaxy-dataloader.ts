@@ -1,22 +1,22 @@
 import { Service } from 'typedi';
 import DataLoader from 'dataloader';
 import { In } from 'typeorm';
-import { drop } from 'lodash';
 
 import { Dataloader } from './interfaces/dataloader';
-import { batch, batchMany, paginatedBatch } from './batch';
+import { batch, paginatedBatch, PaginatedBatch } from './batch';
 
 import UserRepository from '~/repositories/user-repository';
-import { User } from '~/entity/User';
-import { Void } from '~/entity/Void';
 import VoidRepository from '~/repositories/void-repository';
 import StarRepository from '~/repositories/star-repository';
+import { User } from '~/entity/User';
+import { Void } from '~/entity/Void';
 import { Star } from '~/entity/Star';
 
 export interface GalaxyLoader {
   author: Dataloader;
   void: Dataloader;
   stars: Dataloader;
+  starsIds: DataLoader<PaginatedBatch, any[]>;
 }
 
 @Service()
@@ -51,16 +51,23 @@ export default class GalaxyDataloader {
 
   private get starsLoader() {
     return new DataLoader(async keys => {
-      const galaxiesIds = keys as any[];
-      const starsIds =
-        await paginatedBatch<Star>({ select: 'id', where: ['galaxyId', galaxiesIds], entity: 'stars' });
+      const starsIds = keys as any[];
       const stars = starsIds.length > 0 ? await this.starRepository.repository.find({
         where: {
           id: In(starsIds),
         },
       }) : [];
+      return batch<Star>(starsIds, stars, 'id');
+    });
+  }
 
-      return batchMany<Star>(galaxiesIds, stars, 'galaxyId');
+  private get starsIdsLoader(): DataLoader<PaginatedBatch, any[]> {
+    return new DataLoader(async keys => {
+      const take = keys.length > 0 ? keys[0].take : 10;
+      const galaxiesIds = keys.map(key => key.id);
+      const starsIds =
+        await paginatedBatch<Star>({ select: 'id', where: ['galaxyId', galaxiesIds], entity: 'stars', take });
+      return galaxiesIds.map(key => starsIds[key]);
     });
   }
 
@@ -69,6 +76,7 @@ export default class GalaxyDataloader {
       author: this.authorLoader,
       void: this.voidLoader,
       stars: this.starsLoader,
+      starsIds: this.starsIdsLoader,
     });
   }
 }
