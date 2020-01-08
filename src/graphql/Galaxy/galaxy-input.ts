@@ -17,5 +17,5 @@ export class CreateGalaxyInput implements Partial<Galaxy> {
 @InputType()
 export class SearchGalaxyInput extends SearchInput {
   @Field()
-  voidId: string;
+  slug: string;
 }

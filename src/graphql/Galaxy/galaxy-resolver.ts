@@ -22,7 +22,7 @@ export class GalaxyResolver {
   ): Promise<GalaxiesPayload | undefined> {
     const { edges, totalCount } = await this.galaxyRepository.paginateAndSearch(
       input,
-      input.voidId,
+      input.slug,
     );
 
     return {

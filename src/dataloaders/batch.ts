@@ -13,6 +13,9 @@ export function batch<T>(keys: any[], entities: any[], entityKeyIterator: keyof 
 
 export interface PaginatedBatch { id: string; take: number; }
 
+/**
+ * @todo Add pagination + query search
+ */
 export async function paginatedBatch<T>({
   select, where, entity, take = 10,
 }: {

@@ -37,11 +37,13 @@ export default class GalaxyRepository {
 
   public async paginateAndSearch(
     { page, limit, query }: SearchInput,
-    voidId: string,
+    slug: string,
   ): Promise<GalaxiesPayload> {
     const offset = (page - 1) * limit;
+
     const [galaxies, totalCount] = await this.repository.createQueryBuilder('galaxy')
-      .where('galaxy.void = :voidId', { voidId })
+      .innerJoin('galaxy.void', 'void', 'void.slug = :slug', { slug })
+      .where('galaxy.void = void.id')
       .innerJoin('galaxy.author', 'author')
       .andWhere(new Brackets(qb => {
         qb.where('LOWER(galaxy.title) LIKE LOWER(:query)', { query: `%${query}%` })

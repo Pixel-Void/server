@@ -44,7 +44,7 @@ export class Void {
 
   @Field(type => [Galaxy])
   @OneToMany(type => Galaxy, galaxy => galaxy.void)
-  galaxies!: Promise<Galaxy[]>;
+  galaxies!: Galaxy[];
 
   @BeforeInsert()
   private slugify() {

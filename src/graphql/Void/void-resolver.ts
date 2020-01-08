@@ -46,6 +46,9 @@ export class VoidResolver {
     return this.voidRepository.findOne({ slug });
   }
 
+  /**
+   * @todo add pagination + query search
+   */
   @FieldResolver()
   async galaxies(@Root() voidEntity: Void, @Ctx() { loaders }: AppContext) {
     return loaders.voids.galaxies.load(voidEntity.id);
