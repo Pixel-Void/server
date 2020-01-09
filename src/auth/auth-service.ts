@@ -22,11 +22,13 @@ export default class AuthService {
       const user = await this.userRepository.findOneOrFail({ email });
       const isCorrectPassword = this.checkPassword(password, user.password);
 
-      if (!isCorrectPassword) throw new Error();
+      if (!isCorrectPassword) throw new Error('');
 
       const accessToken = jwt.sign({ user: { id: user.id } }, this.configService.get('JWT_SECRET'), {
         expiresIn: '2y',
       });
+
+      await this.userRepository.update(user.id, { lastLoginAt: new Date() });
 
       return { user, accessToken };
     } catch {

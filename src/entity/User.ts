@@ -49,6 +49,10 @@ export class User {
   @UpdateDateColumn()
   updatedAt: string;
 
+  @Field({ nullable: true })
+  @Column('timestamp', { nullable: true })
+  lastLoginAt: Date;
+
   @Field(type => [UsersVoids], { name: 'voidSubscriptions' })
   @OneToMany(type => UsersVoids, userToVoids => userToVoids.user)
   voids!: UsersVoids[];
