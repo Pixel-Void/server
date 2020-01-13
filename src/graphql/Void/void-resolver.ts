@@ -51,7 +51,7 @@ export class VoidResolver {
    */
   @FieldResolver()
   async galaxies(@Root() voidEntity: Void, @Ctx() { loaders }: AppContext) {
-    return loaders.voids.galaxies.load(voidEntity.id);
+    return loaders.void.galaxies.load(voidEntity.id);
   }
 
 }

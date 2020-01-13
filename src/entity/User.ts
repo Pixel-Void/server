@@ -7,6 +7,8 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
   OneToMany,
+  ManyToOne,
+  getRepository,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import bcryptjs from 'bcryptjs';
@@ -14,6 +16,7 @@ import bcryptjs from 'bcryptjs';
 import { UsersVoids } from './UsersVoids';
 import { Galaxy } from './Galaxy';
 import { Star } from './Star';
+import { Role, RolesPrivileges } from './Role';
 
 @ObjectType('UserNode')
 @Entity({ name: 'users' })
@@ -53,6 +56,13 @@ export class User {
   @Column('timestamp', { nullable: true })
   lastLoginAt: Date;
 
+  @Column({ nullable: false })
+  roleId: string;
+
+  @Field(type => Role)
+  @ManyToOne(type => Role, role => role.users)
+  role: Role;
+
   @Field(type => [UsersVoids], { name: 'voidSubscriptions' })
   @OneToMany(type => UsersVoids, userToVoids => userToVoids.user)
   voids!: UsersVoids[];
@@ -69,5 +79,17 @@ export class User {
     if (this.password) {
       this.password = bcryptjs.hashSync(this.password);
     }
+  }
+
+  @BeforeInsert()
+  private async setUserRole() {
+    const userRole = await getRepository(Role).findOneOrFail({
+      where: {
+        privilege: RolesPrivileges.USER,
+      },
+      order: { createdAt: 'ASC' },
+    });
+
+    this.role = userRole;
   }
 }

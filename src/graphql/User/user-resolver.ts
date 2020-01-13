@@ -63,4 +63,9 @@ export class UserResolver {
   async voids(@Root() user: User, @Ctx() { loaders }: AppContext) {
     return loaders.user.voidSubscription.load(user.id);
   }
+
+  @FieldResolver()
+  async role(@Root() user: User, @Ctx() { loaders }: AppContext) {
+    return loaders.user.role.load(user.roleId);
+  }
 }
